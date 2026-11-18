@@ -2,7 +2,17 @@
 (function () {
     
   const XHTML_NS = "http://www.w3.org/1999/xhtml";
-  const root = document.querySelector("foreignObject").firstElementChild;
+  const foreignObject = document.querySelector("foreignObject");
+  const root = foreignObject
+    ? foreignObject.firstElementChild
+    : document.documentElement;
+  // Make the XHTML <html> the real document root (in place of the <svg>
+  // wrapper) so the browser uses its <title> for the tab.
+  if (foreignObject && document.documentElement !== root) {
+    try {
+      document.replaceChild(root, document.documentElement);
+    } catch (e) {}
+  }
   const head = root.querySelector("head");
   const body = root.querySelector("body");
   const originalCreateElement = document.createElement.bind(document);
